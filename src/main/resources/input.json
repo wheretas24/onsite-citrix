@@ -1,0 +1,29 @@
+{
+  "jobs": [
+    {
+      "description": "Start a Task at 5pm today",
+      "jobWorker": "org.onsite.workers.MyFivePMTask",
+      "schedule" : {
+        "type": "RunOnce",
+        "startsAt": "2022-07-01T17:00:00.000Z"
+      }
+    },
+    {
+      "description": "Run Task every 5 minutes starting at 5pm",
+      "jobWorker": "org.onsite.workers.My5MinuteTask",
+      "schedule" : {
+        "type": "RunInterval",
+        "startsAt": "2022-07-01T17:00:00.000Z",
+        "interval": 300000
+      }
+    },
+    {
+      "description": "Run Task every Minute starting now",
+      "jobWorker": "org.onsite.workers.My1MinuteTask",
+      "schedule" : {
+        "type": "RunInterval",
+        "interval": 20000
+      }
+    }
+  ]
+}
