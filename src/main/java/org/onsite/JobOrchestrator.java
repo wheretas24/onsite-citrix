@@ -2,34 +2,20 @@ package org.onsite;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.onsite.models.input.CitrixJob;
-import org.onsite.models.input.CitrixSchedule;
 import org.onsite.models.input.CitrixTemplate;
 import org.onsite.workers.My1MinuteTask;
 import org.onsite.workers.My5MinuteTask;
 import org.onsite.workers.MyFivePMTask;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 
 import static org.onsite.SchedulerConstants.*;
 
 @Slf4j
 public class JobOrchestrator {
-
-
-
-    SimpleDateFormat formatter;
-
-    public JobOrchestrator(){
-        this.formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.ENGLISH);
-    }
-
-
 
     public void initiateJobs(CitrixTemplate citrixTemplate) throws ParseException {
 
@@ -45,7 +31,6 @@ public class JobOrchestrator {
                     startFivePMTask(citrixJob);
                     break;
                 default:
-                    log.error("invalid job-worker");
                     return;
             }
         }
@@ -55,13 +40,15 @@ public class JobOrchestrator {
 
         log.info("Starting 1 Minute Task");
 
-        My1MinuteTask my1MinuteTask = new My1MinuteTask(citrixJob.getDescription());
+        My1MinuteTask my1MinuteTask = new My1MinuteTask();
         Timer timer = new Timer();
-        Date date = getDate(citrixJob.getSchedule());
+        Date date = SchedulerUtils.getDate(citrixJob.getSchedule());
 
         if(citrixJob.getSchedule().getInterval() == 0){
+            log.info("scheduling 1minutetask with no interval");
             timer.schedule(my1MinuteTask, date);
         }else{
+            log.info("scheduling 1minutetask with interval of " + citrixJob.getSchedule().getInterval());
             timer.schedule(my1MinuteTask, date ,citrixJob.getSchedule().getInterval());
         }
 
@@ -72,13 +59,15 @@ public class JobOrchestrator {
 
         log.info("Starting 5 minute task");
 
-        My5MinuteTask my5MinuteTask = new My5MinuteTask(citrixJob.getDescription());
+        My5MinuteTask my5MinuteTask = new My5MinuteTask();
         Timer timer = new Timer();
-        Date date = getDate(citrixJob.getSchedule());
+        Date date = SchedulerUtils.getDate(citrixJob.getSchedule());
 
         if(citrixJob.getSchedule().getInterval() == 0){
+            log.info("scheduling 5minutetask with no interval");
             timer.schedule(my5MinuteTask, date);
         }else{
+            log.info("scheduling 5minutetask with interval of " + citrixJob.getSchedule().getInterval());
             timer.schedule(my5MinuteTask, date ,citrixJob.getSchedule().getInterval());
         }
 
@@ -88,31 +77,20 @@ public class JobOrchestrator {
     private void startFivePMTask(CitrixJob citrixJob) throws ParseException {
         log.info("Starting Five PM task");
 
-        MyFivePMTask myFivePMTask = new MyFivePMTask(citrixJob.getDescription());
+        MyFivePMTask myFivePMTask = new MyFivePMTask();
         Timer timer = new Timer();
-        Date date = getDate(citrixJob.getSchedule());
+        Date date = SchedulerUtils.getDate(citrixJob.getSchedule());
 
         if(citrixJob.getSchedule().getInterval() == 0){
+            log.info("scheduling FivePMtask with no interval");
             timer.schedule(myFivePMTask, date);
         }else{
+            log.info("scheduling FivePMtask with interval of " + citrixJob.getSchedule().getInterval());
             timer.schedule(myFivePMTask, date ,citrixJob.getSchedule().getInterval());
         }
 
         log.info("Five PM Task scheduled successfully");
 
-    }
-
-    private Date getDate(CitrixSchedule citrixSchedule) throws ParseException {
-
-        log.info("Converting input date to date object for input: {}", citrixSchedule.getStartsAt());
-
-        Date date;
-        if(StringUtils.isEmpty(citrixSchedule.getStartsAt())){
-            date = new Date();
-        }else{
-            date = formatter.parse(citrixSchedule.getStartsAt());
-        }
-        return date;
     }
 }
 

@@ -8,10 +8,6 @@ import java.util.TimerTask;
 @Slf4j
 public class MyFivePMTask extends TimerTask{
 
-    String description;
-    public MyFivePMTask(String description){
-        this.description = description;
-    }
 
     @Override
     public void run() {
