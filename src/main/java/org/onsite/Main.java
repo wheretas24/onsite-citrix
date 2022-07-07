@@ -52,6 +52,13 @@ public class Main {
                 if(StringUtils.isEmpty(schedule.getType())){
                     errorList.add("Required field is null: 'type' for entry #" + i);
                 }else{
+
+                    if(!schedule.getType().equalsIgnoreCase(SchedulerConstants.RUN_INTERVAL)
+                            && !schedule.getType().equalsIgnoreCase(SchedulerConstants.RUN_ONCE)){
+                        errorList.add("Required entry for: 'type' is invalid for entry #" + i);
+
+                    }
+
                     if(schedule.getType().equalsIgnoreCase(SchedulerConstants.RUN_INTERVAL)
                             && schedule.getInterval() == 0){
                         errorList.add("Required field for RunInterval Schedule is null: 'interval' for entry #" + i);
